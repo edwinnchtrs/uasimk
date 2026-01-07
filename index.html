@@ -505,6 +505,92 @@
             border-radius: 8px;
             box-shadow: 0 0 50px rgba(99, 102, 241, 0.5);
         }
+
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            /* Less padding */
+            header {
+                min-height: auto;
+                padding: 120px 0 60px 0;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .section-number {
+                margin-bottom: 5px;
+            }
+
+            /* Grid Stacking */
+            .grid,
+            .roster-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px;
+            }
+
+            /* Process Nav - Horizontal Scroll */
+            .process-nav {
+                overflow-x: auto;
+                white-space: nowrap;
+                justify-content: flex-start;
+                padding: 15px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .process-item {
+                flex: 0 0 auto;
+                margin-right: 20px;
+                font-size: 0.8rem;
+            }
+
+            /* 3D Phone Scale Down */
+            .phone-mockup {
+                transform: scale(0.7);
+                margin: -50px 0;
+            }
+
+            .phone-container {
+                padding: 0;
+            }
+
+            /* Text Adjustments */
+            .prose h3 {
+                font-size: 1.1rem;
+            }
+
+            .prose p,
+            .prose li {
+                font-size: 0.9rem;
+                text-align: left;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            /* Intro Adjustments */
+            #intro h1 {
+                font-size: 8vw !important;
+            }
+
+            #intro button {
+                padding: 12px 30px;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 
