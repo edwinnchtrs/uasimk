@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DxD Squad MLBB - Edwin's Project</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* --- RESET & VARIABLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #050510;
+            --bg-card: rgba(20, 20, 40, 0.6);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+
+            --primary: #6366f1;
+            /* Indigo */
+            --accent: #d946ef;
+            /* Fuchsia */
+            --gold: #fbbf24;
+            --success: #10b981;
+
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Orbitron', sans-serif;
+
+            --radius: 20px;
+            --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* --- UTILITIES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .grid {
+            display: grid;
+            gap: 30px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gold {
+            color: var(--gold);
+        }
+
+        .text-accent {
+            color: var(--accent);
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .mb-40 {
+            margin-bottom: 40px;
+        }
+
+        /* --- VISUALS --- */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle at center, transparent 40%, #050510 100%);
+            z-index: 5;
+        }
+
+        .xp-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 9999;
+        }
+
+        .xp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            box-shadow: 0 0 20px var(--primary);
+            transition: width 0.1s linear;
+        }
+
+        header {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 60px;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 25px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        /* --- 3D PHONE MOCKUP --- */
+        .phone-container {
+            perspective: 2000px;
+            display: flex;
+            justify-content: center;
+            padding: 50px 0;
+            cursor: pointer;
+        }
+
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            background: #000;
+            border-radius: 40px;
+            border: 12px solid #333;
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s ease-out;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 28px;
+            background: #1a1a2e;
+        }
+
+        .phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background: #333;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 10;
+        }
+
+        /* --- LIVE COUNTERS --- */
+        .stat-card {
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to bottom, #fff, var(--success));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        /* --- FLIP CARDS (ROSTER) --- */
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 400px;
+            perspective: 1000px;
+        }
+
+        .flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-front,
+        .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .flip-front {
+            background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .flip-back {
+            background: var(--primary);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #333;
+            margin-bottom: 20px;
+            border: 3px solid var(--accent);
+            object-fit: cover;
+        }
+
+        .role-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        /* --- GENERAL COMPONENT STYLES --- */
+        .section {
+            padding: 80px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-header {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .section-number {
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 2px 12px;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            padding: 30px;
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .decision-box {
+            border-left: 4px solid var(--gold);
+            background: rgba(251, 191, 36, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .decision-title {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .prose h3 {
+            color: var(--text-main);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .prose p {
+            margin-bottom: 15px;
+            color: #cbd5e1;
+            text-align: justify;
+        }
+
+        .prose ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+        }
+
+        .prose li {
+            margin-bottom: 8px;
+        }
+
+        .showcase-img {
+            width: 100%;
+            border-radius: 12px;
+            transition: 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .showcase-img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Process Nav */
+        .process-nav {
+            display: flex;
+            justify-content: space-between;
+            position: sticky;
+            top: 20px;
+            margin: 40px 0;
+            z-index: 100;
+            background: rgba(10, 10, 20, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 15px 30px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .process-item {
+            text-align: center;
+            opacity: 0.6;
+            transition: 0.3s;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .process-item:hover,
+        .process-item.active {
+            opacity: 1;
+            transform: scale(1.05);
+            color: var(--accent);
+        }
+
+        .process-item.active {
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Music & Intro */
+        .music-ui {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 100;
+            background: rgba(10, 10, 20, 0.9);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .music-ui:hover {
+            border-color: var(--primary);
+        }
+
+        .music-disc {
+            animation: spin 4s linear infinite;
+            animation-play-state: paused;
+            font-size: 1.5rem;
+        }
+
+        .music-ui.playing .music-disc {
+            animation-play-state: running;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 11000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(99, 102, 241, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="xp-bar-container">
+        <div class="xp-bar" id="xpBar"></div>
+    </div>
+    <canvas id="particles"></canvas>
+    <div class="vignette"></div>
+
+    <div class="music-ui" id="musicToggle">
+        <i class="fas fa-compact-disc music-disc"></i>
+        <div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">PROJEK BY EDWIN</div>
+            <div id="trackName" style="font-weight: 600; font-size: 0.9rem;">Paused</div>
+        </div>
+    </div>
+    <audio id="bgMusic">
+        <source src="" type="audio/mpeg">
+    </audio>
+
+    <!-- INTRO -->
+    <div id="intro"
+        style="position:fixed; inset:0; background:var(--bg-deep); z-index:12000; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+        <div style="color:var(--primary); letter-spacing:2px; margin-bottom:10px; font-weight:bold;">PROJEK EDWIN</div>
+        <h1 class="text-gradient" style="font-family:var(--font-display); font-size:4vw; text-align:center;">STUDI
+            KASUS:<br>DXD SQUAD PLATFORM</h1>
+        <div id="typewriter"
+            style="font-family:monospace; color:var(--text-muted); margin-top:20px; font-size:1.2rem; min-height:1.5em;">
+        </div>
+        <button id="startBtn"
+            style="margin-top:40px; padding:15px 40px; background:#fff; color:#000; border:none; border-radius:50px; font-weight:bold; cursor:pointer; font-family:var(--font-display);">MULAI
+            PRESENTASI</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+
+        <header class="reveal">
+            <div
+                style="border:1px solid var(--primary); padding:5px 20px; border-radius:50px; color:var(--primary); margin-bottom:20px;">
+                HUMAN COMPUTER INTERACTION 2026
+            </div>
+            <h1 class="text-gradient">EVOLUSI DESAIN<br>PLATFORM ESPORTS</h1>
+            <p style="max-width:600px; margin:20px auto; color:var(--text-muted);">Dokumentasi lengkap proses
+                perancangan dari konsep abstrak hingga antarmuka fungsional, menggunakan prinsip User-Centered Design.
+            </p>
+
+            <div class="phone-container" id="phoneMockup">
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <div class="phone-screen">
+                        <img src="images/hifi_login_page.png" alt="Tampilan Login Mobile">
+                    </div>
+                </div>
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:10px;">(Arahkan mouse ke HP untuk rotasi
+                3D)</div>
+        </header>
+
+        <div class="process-nav reveal">
+            <div class="process-item active" onclick="scrollToId('latar-belakang')">1. Latar Belakang</div>
+            <div class="process-item" onclick="scrollToId('lofi')">2. Konsep & Lo-Fi</div>
+            <div class="process-item" onclick="scrollToId('hifi')">3. Visual & Hi-Fi</div>
+            <div class="process-item" onclick="scrollToId('squad')">4. The Squad</div>
+        </div>
+
+        <!-- ANALYTICS LIVE -->
+        <section class="section reveal">
+            <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-number" data-target="85">0</div>
+                    <div class="stat-label">Win Rate %</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="1420">0</div>
+                    <div class="stat-label">Total Match</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="32">0</div>
+                    <div class="stat-label">Turnamen</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: LATAR BELAKANG -->
+        <section id="latar-belakang" class="section reveal">
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <h2 class="section-title">Latar Belakang & Masalah</h2>
+                <p class="section-subtitle">Mengapa proyek ini diperlukan oleh DxD Squad?</p>
+            </div>
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card prose">
+                    <h3>Identifikasi Masalah</h3>
+                    <p>Dalam manajemen tim Esports amatir-semipro, informasi seringkali terfragmentasi. Jadwal latihan
+                        di WhatsApp, statistik di in-game history, dan strategi di Discord.</p>
+                    <p>Hal ini menyebabkan <strong>Cognitive Overload</strong> bagi kapten tim dan miss-komunikasi antar
+                        anggota.</p>
+                    <div class="decision-box">
+                        <div class="decision-title">SOLUSI DESAIN</div>
+                        <p style="margin:0; font-size:0.9rem;">Membangun "Central Command Dashboard" yang menyatukan
+                            tracking 3 metrik utama: Performa, Jadwal, dan Roster dalam satu layar, mengurangi waktu
+                            pencarian informasi hingga 70%.</p>
+                    </div>
+                </div>
+                <div class="card prose">
+                    <h3>Metodologi Design</h3>
+                    <p>Kami menerapkan siklus <strong>Design Thinking</strong>:</p>
+                    <ul>
+                        <li><strong>Empathize:</strong> Wawancara dengan 5 player Mythic Glory.</li>
+                        <li><strong>Define:</strong> User membutuhkan akses cepat ke statistik "Last 5 Matches".</li>
+                        <li><strong>Ideate:</strong> Sketsa layout 3-kolom.</li>
+                        <li><strong>Prototype:</strong> Wireframe Lo-Fi ke Hi-Fi.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: LO-FI & ARSITEKTUR -->
+        <section id="lofi" class="section reveal">
+            <div class="section-header">
+                <span class="section-number">02</span>
+                <h2 class="section-title">Information Architecture (Lo-Fi)</h2>
+                <p class="section-subtitle">Penerapan Prinsip Gestalt dalam penyusunan layout.</p>
+            </div>
+            <div class="grid" style="grid-template-columns: 40% 60%;">
+                <div>
+                    <img src="images/lofi_dashboard_structure.png" class="showcase-img" onclick="openModal(this.src)">
+                    <p style="text-align:center; font-size:0.8rem; margin-top:5px; color:var(--text-muted);">Struktur
+                        Dashboard Lo-Fi</p>
+                </div>
+                <div class="card prose">
+                    <h3>Penerapan Gestalt Principles</h3>
+                    <p>Pada tahap wireframe, kami fokus pada struktur tanpa distraksi warna. Keputusan layout didasarkan
+                        pada prinsip psikologi persepsi:</p>
+
+                    <ul>
+                        <li><strong>Proximity (Kedekatan):</strong> Elemen yang berdekatan dipersepsikan sebagai satu
+                            kelompok. Kami menempatkan <em>Avatar Player</em> dan <em>Rank Badge</em> sangat dekat untuk
+                            menunjukkan relasi langsung.</li>
+                        <li><strong>Common Region:</strong> Menggunakan "Card Containers" (kotak pembatas) untuk
+                            memisahkan area <em>News Feed</em> dan <em>Match Stats</em> secara tegas.</li>
+                        <li><strong>F-Pattern Layout:</strong> Mengingat user cenderung memindai layar membentuk huruf
+                            'F', kami menempatkan Navigasi Utama di sisi kiri (vertikal) dan Header Informasi Penting di
+                            bagian atas.</li>
+                    </ul>
+
+                    <div class="decision-box">
+                        <div class="decision-title">KEPUTUSAN STRUKTURAL</div>
+                        <p style="margin:0; font-size:0.9rem;">Kami memilih <strong>12-Column Grid System</strong> untuk
+                            memastikan fleksibilitas dan keteraturan jarak antar komponen (whitespace), memberikan kesan
+                            rapi dan profesional.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: HI-FI & VISUAL -->
+        <section id="hifi" class="section reveal">
+            <div class="section-header">
+                <span class="section-number">03</span>
+                <h2 class="section-title">Visual Identity & Hi-Fi</h2>
+                <p class="section-subtitle">Membangun emosi dan atmosfer "Gaming" melalui warna.</p>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card prose">
+                    <h3>Psikologi Warna (Color Psychology)</h3>
+                    <p>Kami beralih dari monokrom ke tema <strong>"Dark Neon"</strong> untuk menciptakan imersi:</p>
+
+                    <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center;">
+                        <div style="width:40px; height:40px; background:#6366f1; border-radius:8px;"></div>
+                        <div>
+                            <strong>Indigo (#6366f1)</strong>
+                            <div style="font-size:0.8rem; color:var(--text-muted);">Melambangkan strategi, kecerdasan,
+                                dan fokus mendalam.</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center;">
+                        <div style="width:40px; height:40px; background:#d946ef; border-radius:8px;"></div>
+                        <div>
+                            <strong>Fuchsia (#d946ef)</strong>
+                            <div style="font-size:0.8rem; color:var(--text-muted);">Representasi energi tinggi,
+                                kecepatan (role Assassin), dan dinamika.</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center;">
+                        <div
+                            style="width:40px; height:40px; background:#050510; border-radius:8px; border:1px solid #333;">
+                        </div>
+                        <div>
+                            <strong>Deep Void (#050510)</strong>
+                            <div style="font-size:0.8rem; color:var(--text-muted);">Background gelap untuk mengurangi
+                                ketegangan mata (eye strain) saat penggunaan malam hari.</div>
+                        </div>
+                    </div>
+
+                    <h3>Konsistensi Tipografi</h3>
+                    <p>Kami memadukan dua jenis font:</p>
+                    <ul>
+                        <li><strong>Orbitron (Display):</strong> Font geometris futuristik untuk Judul/Header.</li>
+                        <li><strong>Inter (Body):</strong> Font sans-serif humanis yang sangat mudah dibaca untuk konten
+                            paragraf.</li>
+                    </ul>
+                </div>
+                <div>
+                    <img src="images/hifi_dashboard.png" class="showcase-img mb-40" onclick="openModal(this.src)">
+                    <img src="images/hifi_login_page.png" class="showcase-img" onclick="openModal(this.src)">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: SQUAD ROSTER -->
+        <section id="squad" class="section reveal">
+            <div class="section-header">
+                <span class="section-number">04</span>
+                <h2 class="section-title">The Squad Roster</h2>
+                <p class="section-subtitle">Implementasi Interactive Cards untuk profil pemain.</p>
+            </div>
+
+            <div class="roster-grid">
+                <!-- EDWIN -->
+                <div class="flip-card">
+                    <div class="flip-inner">
+                        <div class="flip-front">
+                            <img src="avatars/p1.jpg" class="avatar" alt="Edwin Avatar"
+                                onerror="this.src='https://via.placeholder.com/150/6366f1/fff?text=E'">
+                            <h3>Edwin</h3>
+                            <div class="role-badge">Captain / Roamer</div>
+                        </div>
+                        <div class="flip-back">
+                            <h3>Signature Hero</h3>
+                            <div style="font-size:3rem; margin:10px 0;">🛡️</div>
+                            <h4>Tigreal</h4>
+                            <p class="text-gold" style="font-style:italic; margin-top:10px;">"A real man never hides in
+                                a bush."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KYRO -->
+                <div class="flip-card">
+                    <div class="flip-inner">
+                        <div class="flip-front">
+                            <div class="avatar" style="background: linear-gradient(45deg, #d946ef, #6366f1);"></div>
+                            <h3>Kyro</h3>
+                            <div class="role-badge">Jungler / Assassin</div>
+                        </div>
+                        <div class="flip-back">
+                            <h3>Signature Hero</h3>
+                            <div style="font-size:3rem; margin:10px 0;">⚔️</div>
+                            <h4>Ling</h4>
+                            <p class="text-gold" style="font-style:italic; margin-top:10px;">"Faster than your shadow."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VYN -->
+                <div class="flip-card">
+                    <div class="flip-inner">
+                        <div class="flip-front">
+                            <div class="avatar" style="background: linear-gradient(45deg, #fbbf24, #f59e0b);"></div>
+                            <h3>Vyn</h3>
+                            <div class="role-badge">Midlaner / Mage</div>
+                        </div>
+                        <div class="flip-back">
+                            <h3>Signature Hero</h3>
+                            <div style="font-size:3rem; margin:10px 0;">🔮</div>
+                            <h4>Pharsa</h4>
+                            <p class="text-gold" style="font-style:italic; margin-top:10px;">"Pain makes me stronger."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="card prose" style="text-align:center;">
+                <h3>Kesimpulan Akhir</h3>
+                <p>Projek DxD Squad Platform membuktikan bahwa desain yang estetis tidak harus mengorbankan
+                    fungsionalitas. Dengan memadukan prinsip <strong>Atomic Design</strong>, <strong>Gestalt
+                        Psychology</strong>, dan eksekusi visual <strong>High-Fidelity</strong>, kami menciptakan
+                    pengalaman pengguna yang imersif dan efisien.</p>
+                <div style="margin-top:20px; color:var(--gold); font-weight:bold;">TERIMA KASIH</div>
+            </div>
+        </section>
+
+        <footer style="padding: 60px 0; text-align: center; opacity: 0.5;">
+            <p>Projek Edwin &copy; 2026</p>
+            <p style="font-size: 0.8rem;">Dibuat dengan ❤️ dan Kopi.</p>
+        </footer>
+
+    </main>
+
+    <!-- Modal -->
+    <div class="modal" id="imageModal" onclick="this.classList.remove('active')">
+        <img src="" id="modalImg">
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // 1. Audio System
+        const playlist = [{ src: 'audio/one_squad.mp3', title: 'One Squad' }, { src: 'audio/thank_you.mp3', title: 'Thank You' }];
+        let curTrack = 0; let isPlaying = false;
+        const audio = document.getElementById('bgMusic'); const toggle = document.getElementById('musicToggle');
+
+        function playTrack(i) {
+            if (!audio) return;
+            audio.src = playlist[i].src; audio.load();
+            document.getElementById('trackName').innerText = playlist[i].title;
+        }
+        playTrack(0);
+
+        toggle.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) { audio.play().catch(e => console.log(e)); toggle.classList.add('playing'); }
+            else { audio.pause(); toggle.classList.remove('playing'); }
+        });
+        audio.addEventListener('ended', () => { curTrack = (curTrack + 1) % playlist.length; playTrack(curTrack); if (isPlaying) audio.play(); });
+
+        // 2. 3D Phone
+        const phone = document.querySelector('.phone-mockup');
+        const phoneCont = document.querySelector('.phone-container');
+        phoneCont.addEventListener('mousemove', (e) => {
+            const rect = phoneCont.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const xAxis = (rect.width / 2 - x) / 20;
+            const yAxis = (rect.height / 2 - y) / 20;
+            phone.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+        phoneCont.addEventListener('mouseleave', () => {
+            phone.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        // 3. Live Stats
+        const statsCols = document.querySelectorAll('.stat-number');
+        const statObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting && !e.target.classList.contains('counted')) {
+                    animateVal(e.target, 0, parseInt(e.target.dataset.target), 2000);
+                    e.target.classList.add('counted');
+                }
+            });
+        }, { threshold: 0.5 });
+        statsCols.forEach(s => statObs.observe(s));
+
+        function animateVal(obj, start, end, dur) {
+            let startTimestamp = null;
+            const step = (ts) => {
+                if (!startTimestamp) startTimestamp = ts;
+                const progress = Math.min((ts - startTimestamp) / dur, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // 4. Scroll Logic
+        const xpBar = document.getElementById('xpBar');
+        window.addEventListener('scroll', () => {
+            const s = window.scrollY;
+            const h = document.body.scrollHeight - window.innerHeight;
+            xpBar.style.width = ((s / h) * 100) + '%';
+        });
+
+        // 5. Intro Typewriter
+        const txt = "Nama: Edwin | NIM: 20221301001";
+        const typeDest = document.getElementById('typewriter'); let ti = 0;
+        function type() { if (ti < txt.length) { typeDest.innerHTML += txt.charAt(ti); ti++; setTimeout(type, 50); } }
+        setTimeout(type, 500);
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            document.getElementById('intro').style.opacity = '0';
+            setTimeout(() => document.getElementById('intro').remove(), 1000);
+            if (audio) { isPlaying = true; audio.play(); toggle.classList.add('playing'); }
+        });
+
+        // 6. Helpers
+        window.openModal = (src) => { document.getElementById('modalImg').src = src; document.getElementById('imageModal').classList.add('active'); }
+        window.scrollToId = (id) => { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+
+        // 7. Particles
+        const cvs = document.getElementById('particles'); const ctx = cvs.getContext('2d');
+        cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+        let pts = []; for (let i = 0; i < 60; i++)pts.push({ x: Math.random() * cvs.width, y: Math.random() * cvs.height, vx: (Math.random() - .5), vy: (Math.random() - .5) });
+        function ani() {
+            ctx.clearRect(0, 0, cvs.width, cvs.height); ctx.fillStyle = '#6366f1';
+            pts.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0) p.x = cvs.width; if (p.x > cvs.width) p.x = 0; if (p.y < 0) p.y = cvs.height; if (p.y > cvs.height) p.y = 0; ctx.beginPath(); ctx.arc(p.x, p.y, Math.random() * 2, 0, Math.PI * 2); ctx.fill(); });
+            requestAnimationFrame(ani);
+        }
+        ani();
+
+        // 8. Reveal
+        const revObs = new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }) }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+    </script>
+</body>
+
+</html>
